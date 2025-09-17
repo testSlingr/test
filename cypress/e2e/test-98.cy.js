@@ -6,6 +6,6 @@ describe('Feature: Login', () => {
       cy.get('input[name="password"]').type('1234');
       cy.contains('button','Login').click();
     
-    cy.contains('Welcome');
+    cy.contains('Testing Platform');
   });
 });
