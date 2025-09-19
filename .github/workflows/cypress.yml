@@ -1,9 +1,8 @@
 name: Run Cypress Tests
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
 
 jobs:
@@ -22,15 +21,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Create results folder
-        run: mkdir -p cypress/results
-
-      - name: Run Cypress tests
-        uses: cypress-io/github-action@v6
-        with:
-          browser: chrome
-          # next linea if we want just to run e2e:
-          # command: npx cypress run --component false
+      - name: Run Cypress tests in Chrome (no-sandbox)
+        run: |
+          npx cypress run \
+            --browser chrome \
+            --headless \
+            --no-sandbox \
+            --disable-dev-shm-usage
 
       - name: Merge JSON reports
         run: npx mochawesome-merge cypress/reports/json/*.json > cypress/reports/output.json
