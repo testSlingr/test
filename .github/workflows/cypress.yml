@@ -10,7 +10,7 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node-18.18.2-chrome-116-ff-120  
+      image: cypress/browsers:node-18.18.2-chrome-118-ff-120  
       options: --user 1001
 
     steps:
