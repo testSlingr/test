@@ -26,7 +26,11 @@ jobs:
         run: mkdir -p cypress/results
 
       - name: Run Cypress tests
-        run: npx cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          # next linea if we want just to run e2e:
+          # command: npx cypress run --component false
 
       - name: Merge JSON reports
         run: npx mochawesome-merge cypress/reports/json/*.json > cypress/reports/output.json
