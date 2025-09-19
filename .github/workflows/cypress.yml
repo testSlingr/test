@@ -27,8 +27,10 @@ jobs:
           npx cypress run \
             --browser chrome \
             --headless \
+            -- \
             --no-sandbox \
             --disable-dev-shm-usage
+      
 
       - name: Merge JSON reports
         run: npx mochawesome-merge cypress/reports/json/*.json > cypress/reports/output.json
