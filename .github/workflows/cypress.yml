@@ -1,4 +1,4 @@
-name: Run Cypress Tests (Chrome headless CI)
+name: Run Cypress Tests
 
 on:
   workflow_dispatch:
@@ -24,17 +24,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      - name: Ensure Chrome dependencies are installed
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 \
-            libnss3 libxss1 libasound2 libatk1.0-0 fonts-liberation \
-            xvfb
-
-      - name: Verify Cypress binary (optional but útil)
-        run: npx cypress verify
 
       - name: Run Cypress tests (Chrome headless + Chrome flags)
         
