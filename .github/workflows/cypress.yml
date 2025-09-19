@@ -1,16 +1,17 @@
-name: Cypress Tests
+name: Run Cypress Tests
 
 on:
   workflow_dispatch:
   push:
     branches: [ "main" ]
+  pull_request:
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -19,20 +20,25 @@ jobs:
           node-version: 18.18.2
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Create results folder
         run: mkdir -p cypress/results
 
       - name: Run Cypress tests
-        run: npx cypress run --reporter json --reporter-options "output=cypress/results/results.json"
+        run: npx cypress run
 
-      - name: Debug results
-        run: ls -lh cypress/results && cat cypress/results/results.json || echo "❌ No results.json found"
+      - name: Merge JSON reports
+        run: npx mochawesome-merge cypress/reports/json/*.json > cypress/reports/output.json
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-results
-          path: cypress/results/results.json
-          if-no-files-found: error
+      - name: Commit results to test-results branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin
+          git checkout -B test-results
+          mkdir -p reports
+          cp cypress/reports/output.json reports/results.json
+          git add reports/results.json
+          git commit -m "Update Cypress results [skip ci]" || echo "No changes to commit"
+          git push origin test-results --force
