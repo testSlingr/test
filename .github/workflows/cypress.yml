@@ -1,4 +1,4 @@
-name: Run Cypress Tests
+name: Run Cypress Tests (Chrome headless CI)
 
 on:
   workflow_dispatch:
@@ -9,6 +9,9 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
+    env:
+      TERM: xterm-256color     
+      DEBUG: cypress:cli,cypress:server 
 
     steps:
       - name: Checkout
@@ -22,18 +25,30 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests in Chrome (no-sandbox)
+      - name: Ensure Chrome dependencies are installed
         run: |
-          npx cypress run \
-            --browser chrome \
-            --headless \
-            -- \
-            --no-sandbox \
-            --disable-dev-shm-usage
-      
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 \
+            libnss3 libxss1 libasound2 libatk1.0-0 fonts-liberation \
+            xvfb
+
+      - name: Verify Cypress binary (optional but útil)
+        run: npx cypress verify
+
+      - name: Run Cypress tests (Chrome headless + Chrome flags)
+        
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          
+          command: npx cypress run --browser chrome --headless -- --no-sandbox --disable-dev-shm-usage
+        env:
+          CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
 
       - name: Merge JSON reports
-        run: npx mochawesome-merge cypress/reports/json/*.json > cypress/reports/output.json
+        run: |
+          npx mochawesome-merge cypress/reports/json/*.json > cypress/reports/output.json
 
       - name: Commit results to test-results branch
         run: |
