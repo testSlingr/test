@@ -9,35 +9,27 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
-    env:
-      TERM: xterm-256color     
-      DEBUG: cypress:cli,cypress:server 
+    container:
+      image: cypress/browsers:node-18.18.2-chrome-116-ff-120  
+      options: --user 1001
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.18.2
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests (Chrome headless + Chrome flags)
-        
+      - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
           install: false
-          
-          command: npx cypress run --browser chrome --headless -- --no-sandbox --disable-dev-shm-usage
-        env:
-          CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+          browser: chrome
+          headed: false
+          config: video=false
 
-      - name: Merge JSON reports
-        run: |
-          npx mochawesome-merge cypress/reports/json/*.json > cypress/reports/output.json
+      - name: Merge JSON reports (mochawesome)
+        run: npx mochawesome-merge cypress/reports/json/*.json > cypress/reports/output.json
 
       - name: Commit results to test-results branch
         run: |
