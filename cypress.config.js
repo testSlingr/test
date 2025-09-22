@@ -1,17 +1,10 @@
-const { defineConfig } = require("cypress");
+const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 
-module.exports = defineConfig({
+module.exports = {
   e2e: {
     setupNodeEvents(on, config) {
-      require('cypress-mochawesome-reporter/plugin')(on);
+      allureWriter(on, config);
       return config;
-    },
-    reporter: "cypress-mochawesome-reporter",
-    reporterOptions: {
-      reportDir: "cypress/reports/json",
-      overwrite: false,
-      html: false,
-      json: true
     }
   }
-});
+};

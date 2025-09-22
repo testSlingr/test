@@ -1,4 +1,4 @@
-name: Cypress Tests
+name: Cypress Tests with Allure
 
 on:
   workflow_dispatch:
@@ -21,18 +21,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Create results folder
-        run: mkdir -p cypress/results
+      - name: Run Cypress tests with Allure
+        run: |
+          npx cypress run --env allure=true
+          ls -lh allure-results || echo "❌ No allure results found"
 
-      - name: Run Cypress tests
-        run: npx cypress run --reporter json --reporter-options "output=cypress/results/results.json"
+      - name: Generate Allure Report
+        run: |
+          npx allure generate allure-results --clean -o allure-report
+          ls -lh allure-report
 
-      - name: Debug results
-        run: ls -lh cypress/results && cat cypress/results/results.json || echo "❌ No results.json found"
-
-      - name: Upload test results
+      - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-results
-          path: cypress/results/results.json
+          name: allure-report
+          path: allure-report
           if-no-files-found: error
