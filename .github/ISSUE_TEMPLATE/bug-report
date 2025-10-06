@@ -1,0 +1,8 @@
+name: 🐛 Reporte de Error (Bug)
+description: Reporta un problema para que podamos solucionarlo.
+title: "[BUG] Descripción breve del problema"
+labels: ["bug", "triage"] # <-- ¡Aquí asignas las etiquetas por defecto!
+assignees:
+  - nombre-de-usuario-default
+body:
+  # Contenido del formulario...
