@@ -1,0 +1,23 @@
+name: Auto-label Issues
+
+on:
+  issues:
+    types: [opened, reopened]
+
+jobs:
+  add_default_label:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Assign tag 'bug'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['bug']
+            })
